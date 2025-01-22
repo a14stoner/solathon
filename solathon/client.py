@@ -12,6 +12,8 @@ from .core.types import (
     Commitment,
     LargestAccounts,
     LargestAccountsType,
+    LargestTokenAccounts,
+    LargestTokenAccountsType,
     PubKeyIdentity,
     PubKeyIdentityType,
     RPCResponse,
@@ -415,6 +417,21 @@ class Client:
         if self.clean_response:
             return [LargestAccounts(account) for account in response["value"]]
         return response
+    
+    def get_largest_token_accounts(
+        self, mint: Text
+    ) -> RPCResponse[List[LargestTokenAccountsType]] | List[LargestTokenAccounts]:
+        """
+        Returns the token largest accounts.
+
+        Returns:
+            RPCResponse: The response from the RPC endpoint.
+        """
+
+        response = self.build_and_send_request("getTokenLargestAccounts", [mint])
+        if self.clean_response:
+            return [LargestTokenAccounts(account) for account in response["value"]]
+        return response
 
     def get_leader_schedule(
         self,
@@ -730,6 +747,8 @@ class Client:
         res: RPCResponse = self.http.send(data)
         if self.clean_response:
             if "error" in res:
+                print(res['error']['code'])
+                print(res['error']['message'])
                 raise RPCRequestError(
                     f"Failed to fetch data from RPC endpoint. Error {res['error']['code']}: {res['error']['message']}"
                 )
