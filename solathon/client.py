@@ -747,8 +747,6 @@ class Client:
         res: RPCResponse = self.http.send(data)
         if self.clean_response:
             if "error" in res:
-                print(res['error']['code'])
-                print(res['error']['message'])
                 raise RPCRequestError(
                     f"Failed to fetch data from RPC endpoint. Error {res['error']['code']}: {res['error']['message']}"
                 )
